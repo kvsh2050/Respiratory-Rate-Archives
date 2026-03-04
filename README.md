@@ -1,73 +1,94 @@
-# Respiratory Rate Estimation from PPG Signals
+<div align="center">
+  <h1>Respiratory Rate Estimation from PPG</h1>
+  
+  <p>
+    Estimating respiratory rate from Photoplethysmogram signals using a digital resonator and FFT
+  </p>
 
-![PPG Signal Example](https://via.placeholder.com/800x400?text=PPG+Respiratory+Rate+Estimation)
+<!-- Badges -->
+<p>
+  <a href="https://github.com/kvsh2050/ppg-respiratory-rate/graphs/contributors">
+    <img src="https://img.shields.io/github/contributors/kvsh2050/ppg-respiratory-rate" alt="contributors" />
+  </a>
+  <a href="">
+    <img src="https://img.shields.io/github/last-commit/kvsh2050/ppg-respiratory-rate" alt="last update" />
+  </a>
+  <a href="https://github.com/kvsh2050/ppg-respiratory-rate/network/members">
+    <img src="https://img.shields.io/github/forks/kvsh2050/ppg-respiratory-rate" alt="forks" />
+  </a>
+  <a href="https://github.com/kvsh2050/ppg-respiratory-rate/stargazers">
+    <img src="https://img.shields.io/github/stars/kvsh2050/ppg-respiratory-rate" alt="stars" />
+  </a>
+  <a href="https://github.com/kvsh2050/ppg-respiratory-rate/issues/">
+    <img src="https://img.shields.io/github/issues/kvsh2050/ppg-respiratory-rate" alt="open issues" />
+  </a>
+  <a href="https://github.com/kvsh2050/ppg-respiratory-rate/blob/master/LICENSE">
+    <img src="https://img.shields.io/github/license/kvsh2050/ppg-respiratory-rate.svg" alt="license" />
+  </a>
+</p>
 
-## Table of Contents
+<h4>
+  <a href="https://github.com/kvsh2050/ppg-respiratory-rate">View Demo</a>
+  <span> · </span>
+  <a href="https://github.com/kvsh2050/ppg-respiratory-rate">Documentation</a>
+  <span> · </span>
+  <a href="https://github.com/kvsh2050/ppg-respiratory-rate/issues/">Report Bug</a>
+  <span> · </span>
+  <a href="https://github.com/kvsh2050/ppg-respiratory-rate/issues/">Request Feature</a>
+</h4>
+</div>
 
-1. [Overview](#overview)
-2. [Objective](#objective)
-3. [Methodology](#methodology)
-4. [Dataset Source](#dataset-source)
-5. [Preprocessing & Signal Analysis](#preprocessing--signal-analysis)
-6. [Reference Paper](#reference-paper)
-7. [How to Run](#how-to-run)
-8. [Results](#results)
-9. [Contributors](#contributors)
+<br />
 
----
+<!-- Table of Contents -->
+# :notebook_with_decorative_cover: Table of Contents
 
-## Overview
+- [About the Project](#star2-about-the-project)
+  * [Features](#dart-features)
+- [Methodology](#microscope-methodology)
+- [Dataset](#floppy_disk-dataset)
+- [Getting Started](#toolbox-getting-started)
+  * [Prerequisites](#bangbang-prerequisites)
+  * [Installation](#gear-installation)
+  * [Run Locally](#running-run-locally)
+- [Results](#chart_with_upwards_trend-results)
+- [Reference Paper](#books-reference-paper)
+- [Contributing](#wave-contributing)
+- [License](#warning-license)
+- [Contact](#handshake-contact)
+- [Acknowledgements](#gem-acknowledgements)
 
-This project implements a **robust algorithm** to estimate **respiratory rate (RR)** from **Photoplethysmogram (PPG)** signals. The technique leverages a **digital resonator filter** followed by **frequency-domain analysis (FFT)** to extract the dominant respiratory frequency.
 
----
+<!-- About the Project -->
+## :star2: About the Project
 
-## Objective
+This project implements a **robust algorithm** to estimate **respiratory rate (RR)** from **Photoplethysmogram (PPG)** signals. The technique leverages a **digital resonator filter** followed by **frequency-domain analysis (FFT)** to extract the dominant respiratory frequency — enabling non-invasive, wearable-ready respiration monitoring.
 
-Estimate the **respiratory rate (breaths per minute)** from PPG signals using:
+### :dart: Features
 
-* Bandpass filtering to isolate respiratory frequency
-* A **digital resonator** for signal enhancement
-* **Fast Fourier Transform (FFT)** for frequency extraction
+- Bandpass filtering to isolate the respiratory frequency band (0.1–0.4 Hz)
+- **Digital resonator** centered at 0.25 Hz for signal enhancement
+- **FFT-based** dominant frequency extraction
+- Outputs respiratory rate directly in **breaths per minute (BPM)**
+- Adjustable sampling rate — defaults to 100 Hz
 
----
 
-## Methodology
+<!-- Methodology -->
+## :microscope: Methodology
 
-### Workflow:
+The pipeline processes a raw PPG signal through four stages:
 
-1. Load raw PPG data (sampled at 100 Hz)
-2. Apply a **bandpass filter** between 0.1–0.4 Hz
-3. Design and apply a **digital resonator** centered at 0.25 Hz
-4. Perform **FFT** on the enhanced signal
-5. Detect the **dominant frequency** in the respiratory band
-6. Convert the peak frequency from Hz to **breaths per minute (BPM)**
+**1. Load** — Raw PPG data sampled at 100 Hz (`.mat` or `.csv`)
 
----
+**2. Bandpass Filter** — Isolate the 0.1–0.4 Hz respiratory frequency band
 
-## Dataset Source
+**3. Digital Resonator** — Enhance the dominant respiratory component centered at 0.25 Hz:
 
-* **Source**: Publicly available or simulated PPG datasets (e.g., PhysioNet)
-* **Format**: `.mat` or `.csv`
-* **Sampling Rate**: 100 Hz used in this implementation (can be adjusted)
+```
+y[n] = 2·cos(w0)·y[n-1] − y[n-2] + x[n] − 2·cos(w0)·x[n-1] + x[n-2]
+```
 
----
-
-## Preprocessing & Signal Analysis
-
-### Signal Processing Details:
-
-* **Bandpass Filter**: 0.1–0.4 Hz (covers typical respiration frequencies)
-* **Digital Resonator**:
-
-  * Designed with center frequency = 0.25 Hz
-  * Form: `y[n] = 2 * cos(w0) * y[n-1] - y[n-2] + x[n] - 2 * cos(w0) * x[n-1] + x[n-2]`
-* **FFT**:
-
-  * Applied to resonated signal
-  * Extract dominant peak in frequency range
-
-### Code Snippet (Simplified):
+**4. FFT + Peak Detection** — Identify the dominant frequency and convert to BPM
 
 ```python
 # Design digital resonator
@@ -84,62 +105,105 @@ peak_freq = freqs[resp_band][np.argmax(np.abs(spectrum[resp_band]))]
 respiratory_rate = peak_freq * 60
 ```
 
----
 
-## Reference Paper
+<!-- Dataset -->
+## :floppy_disk: Dataset
 
-Based on:
+| Field           | Details                                      |
+|-----------------|----------------------------------------------|
+| **Source**      | PhysioNet or simulated PPG datasets          |
+| **Format**      | `.mat` / `.csv`                              |
+| **Sampling Rate**| 100 Hz (adjustable in config)               |
+| **Frequency Band**| 0.1–0.4 Hz (typical respiration range)    |
 
-**"An Automated Algorithm for Estimating Respiration Rate from PPG Signals"**
-*Authors*: K. Manojkumar, S. Boppu, M. Sabarimalai Manikandan
-*Published in*: IEEE Sensors Journal
-*DOI*: *\[Add here if available]*
 
-The paper proposes a low-complexity digital resonator combined with spectral analysis for efficient RR estimation from wearable sensors.
+<!-- Getting Started -->
+## :toolbox: Getting Started
 
----
+### :bangbang: Prerequisites
 
-## How to Run
+Python 3.8+ and the following packages:
 
-### Requirements:
+```bash
+pip install numpy scipy matplotlib pandas
+```
 
-* Python 3.8+
-* Required packages: `numpy`, `scipy`, `matplotlib`, `pandas`
+### :gear: Installation
 
-### Running the Code:
+Clone the repository:
+
+```bash
+git clone https://github.com/kvsh2050/ppg-respiratory-rate.git
+cd ppg-respiratory-rate
+pip install -r requirements.txt
+```
+
+### :running: Run Locally
+
+Run the estimation script directly:
 
 ```bash
 python estimate_rr.py
 ```
 
-Or via Jupyter Notebook:
+Or open the Jupyter notebook:
 
 ```bash
 jupyter notebook Respiratory_Rate_Estimation.ipynb
 ```
 
----
 
-## Results
+<!-- Results -->
+## :chart_with_upwards_trend: Results
 
-The implemented method consistently estimates the respiratory rate with high accuracy, even in the presence of mild noise and signal variation.
+The implemented method consistently estimates respiratory rate with high accuracy, even in the presence of mild noise and signal variation.
 
-### Sample Output (Console):
+**Sample console output:**
 
 ```
 Peak frequency in Hz: 0.28
 Estimated Respiratory Rate: 16.8 BPM
 ```
 
-### Spectrum Plot:
+The FFT spectrum plot highlights the dominant frequency peak within the 0.1–0.4 Hz respiratory band. Intermediate signals (bandpassed, resonated) can also be visualized for step-by-step analysis.
 
-* A plotted FFT spectrum highlights the dominant frequency peak in the 0.1–0.4 Hz range.
-* You may visualize intermediate and final signals for analysis.
 
----
+<!-- Reference Paper -->
+## :books: Reference Paper
 
-## Contributors
+This implementation is based on:
 
-* **kvsh2050** – Code implementation, optimization, and documentation
-* Inspired by the algorithm presented by Manojkumar et al. in IEEE Sensors Journal
+> **"An Automated Algorithm for Estimating Respiration Rate from PPG Signals"**  
+> *K. Manojkumar, S. Boppu, M. Sabarimalai Manikandan*  
+> Published in: **IEEE Sensors Journal**  
+> DOI: *(add here if available)*
 
+The paper proposes a low-complexity digital resonator combined with spectral analysis for efficient RR estimation from wearable sensors.
+
+
+<!-- Contributing -->
+## :wave: Contributing
+
+Contributions are welcome! See `contributing.md` to get started.
+
+
+<!-- License -->
+## :warning: License
+
+Distributed under the MIT License. See `LICENSE.txt` for more information.
+
+
+<!-- Contact -->
+## :handshake: Contact
+
+Kavya — [@kvsh2050](https://github.com/kvsh2050) — email@email_client.com
+
+Project Link: [https://github.com/kvsh2050/ppg-respiratory-rate](https://github.com/kvsh2050/ppg-respiratory-rate)
+
+
+<!-- Acknowledgements -->
+## :gem: Acknowledgements
+
+- Manojkumar et al. — algorithm and methodology from their IEEE Sensors Journal paper
+- [PhysioNet](https://physionet.org/) — open-access physiological datasets
+- [Shields.io](https://shields.io/)
