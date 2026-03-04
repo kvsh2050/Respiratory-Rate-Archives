@@ -122,48 +122,25 @@ respiratory_rate = peak_freq * 60
 
 ### :bangbang: Prerequisites
 
-Python 3.8+ and the following packages:
+gcc and matlab
 
-```bash
-pip install numpy scipy matplotlib pandas
-```
-
-### :gear: Installation
-
-Clone the repository:
-
-```bash
-git clone https://github.com/kvsh2050/ppg-respiratory-rate.git
-cd ppg-respiratory-rate
-pip install -r requirements.txt
-```
 
 ### :running: Run Locally
 
 Run the estimation script directly:
 
 ```bash
-python estimate_rr.py
+gcc c_code.c
 ```
 
-Or open the Jupyter notebook:
+Or open the matlab:
 
 ```bash
-jupyter notebook Respiratory_Rate_Estimation.ipynb
+matlab_code.m
 ```
 
 
-<!-- Results -->
-## :chart_with_upwards_trend: Results
-
-The implemented method consistently estimates respiratory rate with high accuracy, even in the presence of mild noise and signal variation.
-
-**Sample console output:**
-
-```
-Peak frequency in Hz: 0.28
-Estimated Respiratory Rate: 16.8 BPM
-```
+``### :running: Results
 
 The FFT spectrum plot highlights the dominant frequency peak within the 0.1–0.4 Hz respiratory band. Intermediate signals (bandpassed, resonated) can also be visualized for step-by-step analysis.
 
@@ -196,7 +173,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- Contact -->
 ## :handshake: Contact
 
-Kavya — [@kvsh2050](https://github.com/kvsh2050) — email@email_client.com
+Kavya — [@kvsh2050](https://github.com/kvsh2050) 
 
 Project Link: [https://github.com/kvsh2050/ppg-respiratory-rate](https://github.com/kvsh2050/ppg-respiratory-rate)
 
