@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>Respiratory Rate Estimation from PPG</h1>
+  <h1>Respiratory Rate Estimation from PPG(ARCHIVED)</h1>
   
   <p>
     Estimating respiratory rate from Photoplethysmogram signals using a digital resonator and FFT
